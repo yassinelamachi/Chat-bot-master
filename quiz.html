@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de Recommandation de Majeur - SUPTECH SANTÉ</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/quiz-styles.css">
+    <link rel="icon" href="images/logo1.png" type="image/x-icon">
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h1>Quiz de Recommandation de Majeur</h1>
+            <img src="images/lolo.png" alt="Logo SUPTECH SANTÉ" class="header-logo" width="400">
+        </div>
+
+        <div class="quiz-content">
+            <div id="question-container">
+                <h2 id="question-text"></h2>
+                <div id="options-container"></div>
+            </div>
+            <button id="next-question-btn" class="hidden">Question suivante</button>
+        </div>
+
+        <div id="result-container" class="hidden">
+            <h2>Résultats</h2>
+            <p id="result-text"></p>
+            <button id="restart-quiz-btn">Recommencer le Quiz</button>
+        </div>
+    </div>
+
+    <script src="quiz-script.js"></script>
+</body>
+</html>

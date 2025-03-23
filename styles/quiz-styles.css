@@ -1,0 +1,147 @@
+/* Styles de base */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    background: url('back.jpg'); /* Your background image */
+    background-size: cover;
+}
+
+/* Contenu principal */
+.main-content {
+    text-align: center;
+    padding: 50px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.main-content h1 {
+    font-size: 2.5rem;
+    color: #007bff;
+    margin-bottom: 20px;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.main-content p {
+    font-size: 1.2rem;
+    color: #555;
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Contenu principal */
+.main-content {
+    text-align: center;
+    padding: 50px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.main-content h1 {
+    font-size: 2.5rem;
+    color: #007bff;
+    margin-bottom: 20px;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.main-content p {
+    font-size: 1.2rem;
+    color: #555;
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.quiz-container {
+    width: 80%;
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.quiz-header {
+    margin-bottom: 20px;
+}
+.header-logo {
+    width: 250px;
+    margin: 0 auto;
+}
+
+.quiz-header h1 {
+    font-size: 24px;
+    color: #333;
+}
+
+.quiz-content {
+    margin-top: 20px;
+}
+
+#question-container {
+    margin-bottom: 20px;
+}
+
+#options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#options-container button {
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#options-container button:hover {
+    background-color: #0056b3;
+}
+
+#result-container {
+    margin-top: 20px;
+}
+
+#result-text {
+    font-size: 18px;
+    color: #333;
+}
+
+#restart-quiz-btn {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#restart-quiz-btn:hover {
+    background-color: #218838;
+}

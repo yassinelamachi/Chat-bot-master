@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUPTECH SANTÉ</title>
+    <link rel="icon" href="images/logo1.png" type="image/x-icon">
+    <link rel="stylesheet" href="styles/sup.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Contenu principal de la page -->
+    
+
+    <!-- Logo du chatbot en bas de la page -->
+    <div class="chatbot-icon" id="chatbot-icon">
+        <img src="images/logo1.png" alt="Chatbot SUPTECH SANTÉ">
+    </div>
+    
+    <!-- Fenêtre du chatbot (cachée par défaut) -->
+    <div class="chatbot-window hidden" id="chatbot-window">
+        <!-- En-tête du chatbot -->
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="header-buttons">
+                    <button id="translate-btn">Traduire en Arabe</button>
+                    <button id="dark-mode-btn">Mode Sombre</button>
+                    <button id="quiz-btn">Aide</button>
+                </div>
+            </div>
+    
+            <!-- Section des questions -->
+            <div class="questions-section">
+                <button id="start-questions-btn">Commencer les questions</button>
+                <div id="current-question" class="hidden">
+                    <h3 id="question-text"></h3>
+                    <p id="answer-text" class="hidden"></p>
+                    <button id="next-question-btn" class="hidden">Question suivante</button>
+                </div>
+            </div>
+    
+            <!-- Boîte de chat -->
+            <div class="chat-box" id="chat-box">
+                <div class="chat-message bot-message">Bonjour ! Comment puis-je vous aider aujourd'hui ?</div>
+            </div>
+    
+            <!-- Zone de saisie pour l'utilisateur -->
+            <div class="chat-input">
+                <input type="text" id="user-input" placeholder="Tapez votre question ici...">
+                <button id="send-btn">Envoyer</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script src="quiz-script.js"></script>
+    <script>
+        // Récupérer les éléments du DOM
+const chatbotIcon = document.getElementById('chatbot-icon');
+const chatbotWindow = document.getElementById('chatbot-window');
+const minimizeChatBtn = document.getElementById('minimize-chat-btn');
+const quizBtn = document.getElementById('quiz-btn');
+const chatContainer = document.querySelector('.chat-container');
+const quizContainer = document.getElementById('quiz-container');
+
+// Afficher ou masquer la fenêtre du chatbot
+chatbotIcon.addEventListener('click', () => {
+    chatbotWindow.classList.toggle('hidden');
+});
+
+// Minimiser la fenêtre du chatbot
+minimizeChatBtn.addEventListener('click', () => {
+    chatbotWindow.classList.add('hidden');
+});
+
+    </script>
+</body>
+</html>
