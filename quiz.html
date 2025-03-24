@@ -829,10 +829,73 @@ body {
 #restart-quiz-btn:hover {
     background-color: #218838;
 }
+/* Style pour le conteneur des résultats */
+#result-container {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Style pour chaque cadre de résultat */
+.result-card {
+    margin: 15px 0;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    color: #333;
+    text-align: left;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: slideIn 0.5s ease-in-out;
+}
+
+.result-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Style pour le numéro du résultat */
+.result-card .rank {
+    font-weight: bold;
+    color: #007bff;
+    margin-right: 10px;
+}
+
+/* Style pour le texte du résultat */
+.result-card .program-name {
+    font-weight: 600;
+}
+
+/* Animation pour l'apparition des résultats */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
     </style>
     <div class="quiz-container">
         <div class="quiz-header">
-            <h1>Quiz de Recommandation de Majeur</h1>
+            <h1>Quiz de Recommandation de parcours</h1>
             <img src="images/logo1.png" alt="Logo SUPTECH SANTÉ"  width="100">
         </div>
 
@@ -846,7 +909,9 @@ body {
 
         <div id="result-container" class="hidden">
             <h2>Résultats</h2>
-            <p id="result-text"></p>
+            <div id="result-text">
+                <!-- Les résultats seront ajoutés ici dynamiquement -->
+            </div>
             <button id="restart-quiz-btn">Recommencer le Quiz</button>
         </div>
     </div>
