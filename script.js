@@ -382,3 +382,6 @@ quizBtn.addEventListener('click', () => {
 
 // Initialisation
 showQuestion();
+addMessage(currentLanguage === 'fr' 
+    ? 'Yassine Lamachi , Adam Erraji , Mouad Bimadarn ,                LIDES Li kayna' 
+    :  false);
