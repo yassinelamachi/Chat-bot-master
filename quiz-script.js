@@ -153,6 +153,24 @@ function showResults() {
     const resultContainer = document.getElementById('result-text');
     resultContainer.innerHTML = ''; // Effacer les résultats précédents
 
+    // Ajouter le message d'explication
+    const explanation = document.createElement('div');
+    explanation.classList.add('explanation-message');
+    explanation.innerHTML = `
+       <div class="custom-message-box">
+            <h3>Vos résultats personnalisés</h3>
+            <p>Nous vous présentons les parcours qui correspondent le mieux à vos réponses, mais gardez à l'esprit :</p>
+            <ul>
+                <li>Ces suggestions sont basées sur vos choix actuels</li>
+                <li>Rien ne vous empêche d'explorer d'autres domaines</li>
+                <li>Parfois, les changements de parcours mènent à de belles surprises</li>
+                <li>L'important est de suivre ce qui vous passionne vraiment</li>
+            </ul>
+            <p class="highlight">Votre avenir académique reste ouvert à toutes les possibilités !</p>
+        </div>
+    `;
+    resultContainer.appendChild(explanation);
+
     top3Programs.forEach((program, index) => {
         const resultCard = document.createElement('div');
         resultCard.classList.add('result-card');

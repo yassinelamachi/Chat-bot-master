@@ -1,9 +1,0 @@
-/* Styles de base */
-body {
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    padding: 0;
-    color: #333;
-    background: url('back.jpg'); /* Your background image */
-    background-size: cover;
-}

@@ -1,3 +1,4 @@
+// Éléments du DOM
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
@@ -8,8 +9,10 @@ const answerText = document.getElementById('answer-text');
 const nextQuestionBtn = document.getElementById('next-question-btn');
 const translateBtn = document.getElementById('translate-btn');
 const darkModeBtn = document.getElementById('dark-mode-btn');
+const quizBtn = document.getElementById('quiz-btn');
 const body = document.body;
-
+const chatbotIcon = document.getElementById('chatbot-icon');
+const chatbotWindow = document.getElementById('chatbot-window');
 
 // Base de données en français
 const database = {
@@ -75,8 +78,7 @@ const database = {
     "Quels sont les modules étudiés en Master en Maintenance et Génie Biomédical ?": "Les modules incluent :\n- Gestion de la maintenance\n- Radiologie médicale\n- Robotique médicale\n- Exigences réglementaires.",
     "Quels sont les modules étudiés en Master en Entrepreneuriat et Management Technologique ?": "Les modules incluent :\n- Gestion de projet\n- Marketing technologique\n- Innovation\n- Entrepreneuriat.",
 };
-// Base de données en arabe
-const databaseArabic = {
+const databaseArabic = { 
     // معلومات عامة
     "ما هي SUPTECH SANTÉ؟": "SUPTECH SANTÉ هي مدرسة متخصصة في الهندسة الطبية وتقنيات الصحة، تقدم شهادات في الهندسة والماجستير والليسانس. وهي جزء من مؤسسة البحث والتطوير والابتكار في العلوم والهندسة ذات المنفعة العامة.",
     "أين تقع فروع SUPTECH SANTÉ؟": "SUPTECH SANTÉ لديها فرعين:\n- فرع الصويرة: شارع الأقواس، الصويرة. الاتصال: +212 666 405 885، contact-essaouira@suptech-sante.ma\n- فرع المحمدية: المنطقة الصناعية، المحمدية. الاتصال: +212 661 625 586، contact-mohammedia@suptech-sante.ma",
@@ -140,33 +142,22 @@ const databaseArabic = {
     "ما هي المواد التي تدرس في الماجستير في ريادة الأعمال والتدبير التكنولوجي؟": "تشمل المواد:\n- تدبير المشاريع\n- التسويق التكنولوجي\n- الابتكار\n- ريادة الأعمال.",
 };
 
-let currentLanguage = 'fr'; // Par défaut en français
-let isDarkMode = false; // Par défaut en mode clair
-
+// Configuration
+let currentLanguage = 'fr'; // 'fr' ou 'ar'
+let isDarkMode = false;
 const questions = Object.keys(database);
 let currentQuestionIndex = 0;
 
-// Afficher la première question
-startQuestionsBtn.addEventListener('click', () => {
-    startQuestionsBtn.classList.add('hidden');
-    currentQuestionDiv.classList.remove('hidden');
-    showQuestion();
-});
+// URLs des APIs
+const AI_API_URL = 'https://backend.buildpicoapps.com/aero/run/llm-api?pk=v1-Z0FBQUFBQm5HUEtMSjJkakVjcF9IQ0M0VFhRQ0FmSnNDSHNYTlJSblE0UXo1Q3RBcjFPcl9YYy1OZUhteDZWekxHdWRLM1M1alNZTkJMWEhNOWd4S1NPSDBTWC12M0U2UGc9PQ==';
+const UNANSWERED_QUESTIONS_API = 'http://localhost:5000/save-question';
 
-// Afficher la question actuelle
-function showQuestion() {
-    if (currentQuestionIndex < questions.length) {
-        questionText.textContent = currentLanguage === 'fr' ? questions[currentQuestionIndex] : Object.keys(databaseArabic)[currentQuestionIndex];
-        answerText.classList.add('hidden');
-        nextQuestionBtn.classList.add('hidden');
-    } else {
-        currentQuestionDiv.innerHTML = "<p>" + (currentLanguage === 'fr' ? "Toutes les questions ont été répondues." : "تمت الإجابة على جميع الأسئلة.") + "</p>";
+// Afficher/masquer la fenêtre du chatbot
+chatbotIcon.addEventListener('click', () => {
+    chatbotWindow.classList.toggle('hidden');
+    if (!chatbotWindow.classList.contains('hidden')) {
+        userInput.focus();
     }
-}
-
-// Remplir la zone de saisie avec la question sélectionnée
-questionText.addEventListener('click', () => {
-    userInput.value = currentLanguage === 'fr' ? questions[currentQuestionIndex] : Object.keys(databaseArabic)[currentQuestionIndex];
 });
 
 // Fonction pour ajouter un message dans le chat
@@ -179,79 +170,215 @@ function addMessage(message, isUser) {
 
     // Faire défiler automatiquement vers le bas
     chatBox.scrollTop = chatBox.scrollHeight;
+
+    // Animation pour les messages du bot
+    if (!isUser) {
+        messageElement.style.opacity = '0';
+        setTimeout(() => {
+            messageElement.style.opacity = '1';
+        }, 100);
+    }
 }
 
-// Envoyer une question
-sendBtn.addEventListener('click', async () => {
-    const question = userInput.value.trim();
-    if (question) {
-        addMessage(question, true); // Afficher la question de l'utilisateur
+// Afficher l'indicateur de chargement
+function showLoadingIndicator(show) {
+    let indicator = document.getElementById('loading-indicator');
+    
+    if (show) {
+        if (!indicator) {
+            indicator = document.createElement('div');
+            indicator.id = 'loading-indicator';
+            indicator.className = 'loading-indicator';
+            indicator.textContent = currentLanguage === 'fr' ? 'Réfléchissement...' : 'جاري التفكير...';
+            chatBox.appendChild(indicator);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    } else {
+        if (indicator) {
+            indicator.remove();
+        }
+    }
+}
 
-        // Vérifier si la question existe dans la base de données
-        const answer = currentLanguage === 'fr' ? database[question] || databaseArabic[question] : databaseArabic[question] || database[question];
+// Obtenir une réponse de l'IA
+async function getAIResponse(prompt) {
+    try {
+        showLoadingIndicator(true);
+        
+        const response = await fetch(AI_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt })
+        });
 
-        if (answer) {
-            addMessage(answer, false); // Afficher la réponse du chatbot
-        } else {
-            // Si la question n'a pas de réponse, l'envoyer au backend
-            try {
-                const response = await fetch('http://localhost:5000/save-question', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        question: question,
-                        email: "yassinelamachi16@gmail.com" // Remplacez par l'e-mail de l'utilisateur si disponible
-                    })
-                });
-
-                if (response.ok) {
-                    addMessage("Nous n'avons pas de réponse à cette question. Nous la traiterons bientôt !", false);
-                } else {
-                    addMessage("Une erreur s'est produite. Veuillez réessayer plus tard.", false);
-                }
-            } catch (error) {
-                console.error("Erreur lors de l'envoi de la question au backend :", error);
-                addMessage("Une erreur s'est produite. Veuillez réessayer plus tard.", false);
-            }
+        if (!response.ok) {
+            throw new Error('Erreur API');
         }
 
-        userInput.value = ''; // Vider la zone de saisie
-
-        // Passer à la question suivante après un court délai
-        setTimeout(() => {
-            currentQuestionIndex++;
-            showQuestion();
-        }, 1000); // Délai de 1 seconde avant de passer à la question suivante
+        const data = await response.json();
+        
+        return data.status === 'success' 
+            ? data.text 
+            : (currentLanguage === 'fr' 
+                ? "Je n'ai pas pu obtenir de réponse. Veuillez reformuler votre question." 
+                : "لم أتمكن من الحصول على إجابة. يرجى إعادة صياغة سؤالك.");
+    } catch (error) {
+        console.error("Erreur API AI:", error);
+        return currentLanguage === 'fr' 
+            ? "Désolé, le service AI est temporairement indisponible." 
+            : "عذرًا، خدمة الذكاء الاصطناعي غير متوفرة حاليًا.";
+    } finally {
+        showLoadingIndicator(false);
     }
-});
+}
 
-// Envoyer une question avec la touche Entrée
-userInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        sendBtn.click();
+// Enregistrer une question sans réponse
+async function saveUnansweredQuestion(question) {
+    try {
+        await fetch(UNANSWERED_QUESTIONS_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                question, 
+                email: "user@example.com",
+                language: currentLanguage
+            })
+        });
+    } catch (error) {
+        console.error("Erreur lors de l'enregistrement de la question:", error);
     }
-});
+}
 
-// Traduction français-arabe
+// Traiter le message de l'utilisateur
+async function handleUserMessage(question) {
+    addMessage(question, true);
+    userInput.value = '';
+
+    // Vérifier d'abord la base de données locale
+    const localAnswer = currentLanguage === 'fr' 
+        ? database[question] || databaseArabic[question]
+        : databaseArabic[question] || database[question];
+
+    if (localAnswer) {
+        addMessage(localAnswer, false);
+        
+        // Si c'est une question de la liste, passer à la suivante automatiquement
+        if (questions.includes(question) || Object.keys(databaseArabic).includes(question)) {
+            setTimeout(() => {
+                showNextQuestion();
+            }, 1000);
+        }
+    } else {
+        // Si pas de réponse locale, utiliser l'IA
+        const aiResponse = await getAIResponse(question);
+        addMessage(aiResponse, false);
+        
+        // Enregistrer la question sans réponse
+        await saveUnansweredQuestion(question);
+    }
+}
+
+// Afficher la question actuelle
+function showQuestion() {
+    if (currentQuestionIndex < questions.length) {
+        questionText.textContent = currentLanguage === 'fr' 
+            ? questions[currentQuestionIndex] 
+            : Object.keys(databaseArabic)[currentQuestionIndex];
+        answerText.classList.add('hidden');
+        nextQuestionBtn.classList.add('hidden');
+    } else {
+        currentQuestionDiv.innerHTML = `<p>${currentLanguage === 'fr' 
+            ? "Toutes les questions ont été répondues." 
+            : "تمت الإجابة على جميع الأسئلة."}</p>`;
+    }
+}
+
+// Afficher la question suivante
+function showNextQuestion() {
+    currentQuestionIndex++;
+    showQuestion();
+}
+
+// Afficher la réponse à la question actuelle
+function showAnswer() {
+    const currentQuestion = currentLanguage === 'fr' 
+        ? questions[currentQuestionIndex] 
+        : Object.keys(databaseArabic)[currentQuestionIndex];
+        
+    const answer = currentLanguage === 'fr' 
+        ? database[currentQuestion] 
+        : databaseArabic[currentQuestion];
+        
+    answerText.textContent = answer;
+    answerText.classList.remove('hidden');
+    nextQuestionBtn.classList.remove('hidden');
+}
+
+// Basculer entre le français et l'arabe
 translateBtn.addEventListener('click', () => {
     currentLanguage = currentLanguage === 'fr' ? 'ar' : 'fr';
     translateBtn.textContent = currentLanguage === 'fr' ? 'Traduire en Arabe' : 'ترجمة إلى الفرنسية';
-    currentQuestionIndex = 0; // Réinitialiser l'index des questions
-    showQuestion(); // Recharger la question actuelle dans la nouvelle langue
+    currentQuestionIndex = 0;
+    showQuestion();
+    
+    // Mettre à jour le message de bienvenue
+    const welcomeMessage = chatBox.querySelector('.bot-message');
+    if (welcomeMessage) {
+        welcomeMessage.textContent = currentLanguage === 'fr' 
+            ? 'Bonjour ! Comment puis-je vous aider aujourd\'hui ?' 
+            : 'مرحبًا! كيف يمكنني مساعدتك اليوم؟';
+    }
 });
 
-// Basculer entre le mode sombre et le mode clair
+// Basculer entre le mode clair et sombre
 darkModeBtn.addEventListener('click', () => {
     isDarkMode = !isDarkMode;
-    body.classList.toggle('dark-mode', isDarkMode);
-    darkModeBtn.textContent = isDarkMode ? 'Mode Clair' : 'Mode Sombre';
+    body.classList.toggle('dark-mode');
+    darkModeBtn.textContent = isDarkMode 
+        ? (currentLanguage === 'fr' ? 'Mode Clair' : 'الوضع الفاتح')
+        : (currentLanguage === 'fr' ? 'Mode Sombre' : 'الوضع المظلم');
 });
 
-// Afficher les suggestions au chargement de la page
-showQuestion();
+// Gestion de l'envoi de message
+sendBtn.addEventListener('click', async () => {
+    const message = userInput.value.trim();
+    if (message) await handleUserMessage(message);
+});
 
-document.getElementById('quiz-btn').addEventListener('click', () => {
+userInput.addEventListener('keypress', async (e) => {
+    if (e.key === 'Enter') {
+        const message = userInput.value.trim();
+        if (message) await handleUserMessage(message);
+    }
+});
+
+// Question suivante
+nextQuestionBtn.addEventListener('click', showNextQuestion);
+
+// Afficher la réponse quand on clique sur la question
+questionText.addEventListener('click', () => {
+    showAnswer();
+});
+
+// Remplir la zone de saisie avec la question sélectionnée
+questionText.addEventListener('dblclick', () => {
+    userInput.value = currentLanguage === 'fr' 
+        ? questions[currentQuestionIndex] 
+        : Object.keys(databaseArabic)[currentQuestionIndex];
+    userInput.focus();
+});
+
+// Commencer les questions
+startQuestionsBtn.addEventListener('click', () => {
+    startQuestionsBtn.classList.add('hidden');
+    currentQuestionDiv.classList.remove('hidden');
+    showQuestion();
+});
+
+// Redirection vers le quiz
+quizBtn.addEventListener('click', () => {
     window.location.href = 'quiz.html';
 });
+
+// Initialisation
+showQuestion();

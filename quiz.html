@@ -892,6 +892,58 @@ body {
         opacity: 1;
     }
 }
+#external-message {
+    position: absolute;
+    top: 120px;
+    left: 20px;
+    width: 280px;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-left: 4px solid #007bff;
+    animation: fadeInLeft 0.6s ease-out;
+}
+
+#external-message h3 {
+    color: #0056b3;
+    margin-top: 0;
+}
+
+#external-message p {
+    margin: 8px 0;
+    font-size: 0.95rem;
+}
+
+#external-message .highlight {
+    background: #e6f2ff;
+    padding: 8px;
+    border-radius: 4px;
+    font-style: italic;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+@keyframes fadeInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Ajustement pour le conteneur des résultats */
+#result-container {
+    position: relative;
+    margin-top: 20px;
+    clear: both;
+}
+
+.result-card {
+    /* Vos styles existants pour les cartes de résultats */
+    margin: 10px 0;
+    padding: 12px 15px;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
     </style>
     <div class="quiz-container">
         <div class="quiz-header">
